@@ -15,9 +15,9 @@
    <div class=" col mb-4">     <!-- mb stands for "margin-bottom." -->
  <div class="card" style="width: 18rem; margin-bottom:30px;">  
      <div class="card-body">
-        <h5 class="card-title">{{ post.title[0:100] }}</h5>  <!-- #from zero to 100 character -->
+        <h5 class="card-title">{{ post.title}}</h5>  
         <h6 class="card-subtitle mb-2 text-muted">{{ post.subtitle }}</h6>
-        <p class="card-text">{{ post.body }}</p>
+        <p class="card-text">{{ post.body[0:100]  }}</p>     <!-- #from zero to 100 character -->
         <a href="post/{{ post.id }}" class="card-link">Read</a>
      </div>
    <div class="card-footer text-muted">

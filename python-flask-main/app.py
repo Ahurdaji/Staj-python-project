@@ -232,25 +232,36 @@ def create_category():
     return render_template('create-category.html', form=form)
 
 
+
 @app.route('/create-post', methods=['GET', 'POST'])
 @login_required
 def create_post():
     form = PostForm()
-    form.category.choices = [(category.id, category.name) for category in Category.query.all()]
-    if form.validate_on_submit():
-        post = Post(
-            title=form.title.data,
-            subtitle=form.subtitle.data,
-            body=form.body.data,
-            category_id=form.category.data,
-            user_id=current_user.id
-        )
-        db.session.add(post)
-        db.session.commit()
-        flash('Post created successfully!', 'success')
-        return redirect(url_for('get_all_posts'))
-    return render_template('create-post.html', form=form, categories=Category.query.all())
+    try:
+        form.category.choices = [(category.id, category.name) for category in Category.query.all()]
+    except Exception as e:
+        flash(f"Error loading categories: {e}", "danger")
+        return render_template('create-post.html', form=form)
 
+    if form.validate_on_submit():
+        try:
+            post = Post(
+                title=form.title.data,
+                subtitle=form.subtitle.data,
+                body=form.body.data,
+                category_id=form.category.data,
+                user_id=current_user.id
+            )
+            db.session.add(post)
+            db.session.commit()
+            flash('Post created successfully!', 'success')
+            return redirect(url_for('get_all_posts'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Error creating post: {e}", "danger")
+            return render_template('create-post.html', form=form)
+    
+    return render_template('create-post.html', form=form, categories=Category.query.all())
     
 
 @app.route('/register', methods =['GET','POST'])
